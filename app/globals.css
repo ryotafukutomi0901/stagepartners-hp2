@@ -1,50 +1,67 @@
 @import "tailwindcss";
 
+/*
+ * STAGE PARTNERS — デザイントークン
+ *
+ * 配色は「ネイビー / グレージュ / 白 / 黒」の4系統のみで構成する。
+ * 旧版のベージュ(#f5efe7 = 彩度35%・黄み強)は、彩度を落とし黄みを抜いた
+ * グレージュ(--stone)へ置き換えた。ネイビーと同居しても濁らず、
+ * 白との明度差も小さいため、面で敷いても主張しすぎない。
+ */
 :root {
   /* 明色サーフェス */
-  --background: #f3f9fc; /* ページ基調・「白」セクション */
-  --surface: #f3f9fc; /* 白セクション（RoleSection など） */
-  --surface-warm: #f5efe7; /* 「茶（ベージュ）」帯セクション */
-  --surface-alt: #ffffff; /* カード */
+  --paper: #fbfaf9; /* ページ基調 */
+  --stone: #e5e3de; /* 帯セクション(旧ベージュの置き換え) */
+  --stone-deep: #d8d5ce; /* stone 上の罫線・沈めたカード */
 
-  /* 明色セクション上の暗色テキスト */
-  --ink: #2b2b2b;
-  --ink-muted: #6b6459;
-  --header-ink: #2b2b2b;
+  /* ネイビー(ブランドの青) */
+  --navy-deep: #091726; /* フッター(最暗) */
+  --navy: #0e2338; /* 暗色セクション */
+  --navy-mid: #1b3b5a; /* ボタン・強調 */
+  --navy-soft: #2e5375; /* ラベル・アイコン */
 
-  /* 暗色コンテキスト（Hero 画像バンド / Header オーバーレイ）用の明色テキスト */
-  --foreground: #f5f3ef;
-  --subtext: #eee7d9;
+  /* 明色セクション上のテキスト */
+  --ink: #15181c;
+  --ink-muted: #5e6772;
 
-  /* アクセント（ボタン） */
-  --accent: #c5dfdf;
-  --accent-ink: #435c73;
+  /* 暗色セクション上のテキスト */
+  --on-dark: #f3f4f5;
+  --on-dark-muted: rgba(243, 244, 245, 0.6);
 
-  --border-color: rgba(43, 43, 43, 0.12);
+  /* 罫線 */
+  --line: rgba(21, 24, 28, 0.14);
+  --line-dark: rgba(243, 244, 245, 0.16);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-surface-warm: var(--surface-warm);
-  --color-surface-alt: var(--surface-alt);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-stone: var(--stone);
+  --color-stone-deep: var(--stone-deep);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy: var(--navy);
+  --color-navy-mid: var(--navy-mid);
+  --color-navy-soft: var(--navy-soft);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
-  --color-header-ink: var(--header-ink);
-  --color-subtext: var(--subtext);
-  --color-border: var(--border-color);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --font-sans: var(--font-noto-sans-jp), sans-serif;
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-muted: var(--on-dark-muted);
+  --color-line: var(--line);
+  --color-line-dark: var(--line-dark);
+
+  /* 本文・UIはゴシック、見出しと理念は明朝、英字・数字は Inter。
+     仕様書4.2「日本語は可読性の高いゴシック／コーポレートメッセージの一部のみ明朝」に沿う。 */
+  --font-sans: var(--font-noto-sans-jp), system-ui, sans-serif;
+  --font-display: var(--font-shippori-mincho), serif;
+  --font-latin: var(--font-inter), var(--font-noto-sans-jp), sans-serif;
 }
 
 body {
-  background: var(--background);
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -53,4 +70,78 @@ body {
 
 html {
   scroll-behavior: smooth;
+  /* 固定ヘッダーにアンカー先が隠れないようにする */
+  scroll-padding-top: 5.5rem;
+}
+
+/* キーボード操作時のフォーカスを必ず視認できるようにする(WCAG 2.2 AA) */
+:focus-visible {
+  outline: 2px solid var(--navy-mid);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--on-dark);
+}
+
+/*
+ * 写真は既定でモノクロ、ホバーでゆっくり彩度が戻る。
+ * 紙面をネイビー/グレージュに保ちつつ、写真の色数で画面が散らかるのを防ぐ。
+ */
+.media {
+  overflow: hidden;
+}
+
+.media img {
+  filter: grayscale(100%) contrast(1.03) brightness(0.97);
+  transition:
+    filter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: filter, transform;
+}
+
+.media:hover img,
+.media:focus-within img {
+  filter: grayscale(0%) contrast(1) brightness(1);
+  transform: scale(1.05);
+}
+
+/*
+ * ヒーロー等の背景写真はネイビーのデュオトーンで固定する(ホバー彩色しない)。
+ * グレースケール化した写真にネイビーを color 合成し、ブランド色に染める。
+ */
+.duotone img {
+  filter: grayscale(100%) contrast(1.08) brightness(0.62);
+}
+
+.duotone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--navy);
+  mix-blend-mode: color;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* タッチデバイスはホバーが無いため、ズームだけ無効化してモノクロ基調を保つ */
+@media (hover: none) {
+  .media img,
+  .media:hover img,
+  .media:focus-within img {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .media img,
+  .media:hover img,
+  .media:focus-within img {
+    transform: none;
+    transition: filter 0.4s ease;
+  }
 }
