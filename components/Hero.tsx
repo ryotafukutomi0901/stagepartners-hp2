@@ -89,7 +89,7 @@ export default function Hero() {
       ref={sectionRef}
       className="on-dark relative flex h-[100svh] min-h-[600px] w-full items-center overflow-hidden bg-navy"
     >
-      <div className="duotone absolute inset-0">
+      <div className="absolute inset-0">
         <Image
           data-hero-image
           src="/heroimage2.jpg"
@@ -101,9 +101,10 @@ export default function Hero() {
         />
       </div>
 
+      {/* フルカラー写真の上で白抜きテキストの可読性を確保するスクリム */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-navy/70 via-navy/40 to-navy/85"
+        className="absolute inset-0 bg-gradient-to-b from-navy/75 via-navy/55 to-navy/85"
       />
 
       {/* 舞台枠 */}

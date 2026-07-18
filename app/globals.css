@@ -85,46 +85,30 @@ html {
 }
 
 /*
- * 写真は既定でモノクロ、ホバーでゆっくり彩度が戻る。
- * 紙面をネイビー/グレージュに保ちつつ、写真の色数で画面が散らかるのを防ぐ。
+ * 写真はフルカラーで表示する(モノクロ処理はしない)。
+ * ホバー時はゆっくりズームのみ行う。
  */
 .media {
   overflow: hidden;
 }
 
 .media img {
-  filter: grayscale(100%) contrast(1.03) brightness(0.97);
-  transition:
-    filter 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
-    transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
-  will-change: filter, transform;
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
 }
 
 .media:hover img,
 .media:focus-within img {
-  filter: grayscale(0%) contrast(1) brightness(1);
   transform: scale(1.05);
 }
 
 /*
- * ヒーロー等の背景写真はネイビーのデュオトーンで固定する(ホバー彩色しない)。
- * グレースケール化した写真にネイビーを color 合成し、ブランド色に染める。
+ * ヒーロー等の背景写真もフルカラーで表示する。
+ * 白抜きテキストの可読性は、各コンポーネント側のネイビーのグラデーション
+ * スクリムで確保する(画像自体には色調変換をかけない)。
  */
-.duotone img {
-  filter: grayscale(100%) contrast(1.08) brightness(0.62);
-}
 
-.duotone::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--navy);
-  mix-blend-mode: color;
-  opacity: 0.9;
-  pointer-events: none;
-}
-
-/* タッチデバイスはホバーが無いため、ズームだけ無効化してモノクロ基調を保つ */
+/* タッチデバイスはホバーが無いため、ズームを無効化する */
 @media (hover: none) {
   .media img,
   .media:hover img,
@@ -142,7 +126,6 @@ html {
   .media:hover img,
   .media:focus-within img {
     transform: none;
-    transition: filter 0.4s ease;
   }
 }
 

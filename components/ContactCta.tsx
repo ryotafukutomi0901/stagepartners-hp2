@@ -67,7 +67,7 @@ export default function ContactCta() {
       id="contact"
       className="on-dark relative w-full overflow-hidden bg-navy px-6 py-28 sm:px-10 lg:px-14 lg:py-40"
     >
-      <div className="duotone absolute inset-0">
+      <div className="absolute inset-0">
         <div data-contact-image className="absolute inset-x-0 -top-[10%] -bottom-[10%]">
           <Image
             src="/heroimage1.png"
