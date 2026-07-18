@@ -4,32 +4,32 @@
  * STAGE PARTNERS — デザイントークン
  *
  * 配色は「ネイビー / グレージュ / 白 / 黒」の4系統のみで構成する。
- * 旧版のベージュ(#f5efe7 = 彩度35%・黄み強)は、彩度を落とし黄みを抜いた
- * グレージュ(--stone)へ置き換えた。ネイビーと同居しても濁らず、
- * 白との明度差も小さいため、面で敷いても主張しすぎない。
+ * ネイビーは維持しつつ、明色サーフェスとテキストに温かみを持たせる方向へ
+ * 調整済み(2026-07-18)。グレージュ(--stone)は旧ベージュ(#f5efe7、彩度35%)
+ * ほど強くはしないが、無彩色寄りだった前版より明確に黄み・赤みを足している。
  */
 :root {
   /* 明色サーフェス */
-  --paper: #fbfaf9; /* ページ基調 */
-  --stone: #e5e3de; /* 帯セクション(旧ベージュの置き換え) */
-  --stone-deep: #d8d5ce; /* stone 上の罫線・沈めたカード */
+  --paper: #faf7f1; /* ページ基調(温かみのあるアイボリー) */
+  --stone: #e8e0cf; /* 帯セクション(グレージュを強めに) */
+  --stone-deep: #d9cdb3; /* stone 上の罫線・沈めたカード */
 
-  /* ネイビー(ブランドの青) */
+  /* ネイビー(ブランドの青、変更なし) */
   --navy-deep: #091726; /* フッター(最暗) */
   --navy: #0e2338; /* 暗色セクション */
   --navy-mid: #1b3b5a; /* ボタン・強調 */
   --navy-soft: #2e5375; /* ラベル・アイコン */
 
-  /* 明色セクション上のテキスト */
-  --ink: #15181c;
-  --ink-muted: #5e6772;
+  /* 明色セクション上のテキスト(温かみのある黒へ) */
+  --ink: #1a1613;
+  --ink-muted: #6b6255;
 
   /* 暗色セクション上のテキスト */
   --on-dark: #f3f4f5;
   --on-dark-muted: rgba(243, 244, 245, 0.6);
 
   /* 罫線 */
-  --line: rgba(21, 24, 28, 0.14);
+  --line: rgba(26, 22, 19, 0.14);
   --line-dark: rgba(243, 244, 245, 0.16);
 }
 
@@ -143,5 +143,62 @@ html {
   .media:focus-within img {
     transform: none;
     transition: filter 0.4s ease;
+  }
+}
+
+/*
+ * 施工実績(Works)の横に流れる帯。
+ * カード列を複製したトラックを一定速度でtranslateXし、-50%で継ぎ目なく
+ * 元の位置へ戻す。ホバー/フォーカスで一時停止する。
+ * prefers-reduced-motionでは自動アニメーションを止め、代わりに
+ * 通常の横スクロールへフォールバックしてすべてのカードに到達可能にする。
+ */
+.works-marquee {
+  overflow: hidden;
+}
+
+.works-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  padding-inline: 1.5rem;
+  animation: works-flow 36s linear infinite;
+}
+
+@media (min-width: 640px) {
+  .works-marquee-track {
+    gap: 2rem;
+    padding-inline: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .works-marquee-track {
+    padding-inline: 3.5rem;
+  }
+}
+
+.works-marquee:hover .works-marquee-track,
+.works-marquee:focus-within .works-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes works-flow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .works-marquee {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .works-marquee-track {
+    animation: none;
   }
 }

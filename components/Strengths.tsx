@@ -6,8 +6,9 @@ import { prefersReducedMotion, scrollTriggerDefaults } from "@/lib/animations";
 /**
  * STAGE PARTNERSの強み(仕様書6.1)。
  *
- * 見出しを左に貼り付けたまま項目だけを流し、4つの理由を落ち着いて読ませる。
- * 面をネイビーで沈めることで、前後の明色セクションとの境目を作る。
+ * 写真は使わず、4つの理由をカードの格子で見せる。
+ * 前後の写真セクション(Business/Works)がネイビーの沈んだ面を担うため、
+ * ここはグレージュ(stone)の明るい面にして単調な暗転の連続を避ける。
  */
 const STRENGTHS = [
   {
@@ -45,89 +46,73 @@ export default function Strengths() {
       scrollTrigger: { trigger: "[data-strength-head]", ...scrollTriggerDefaults },
     });
 
-    const items = gsap.utils.toArray<HTMLElement>("[data-strength-item]");
-    items.forEach((item) => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: item, start: "top 85%" },
-      });
-
-      tl.from(item.querySelector("[data-strength-rule]"), {
-        scaleX: 0,
-        transformOrigin: "left center",
-        duration: 1,
-        ease: "power3.inOut",
-      }).from(
-        item.querySelectorAll("[data-strength-text]"),
-        { opacity: 0, y: 18, duration: 0.8, stagger: 0.06, ease: "power2.out" },
-        "-=0.7",
-      );
+    gsap.from("[data-strength-card]", {
+      opacity: 0,
+      y: 26,
+      duration: 0.8,
+      ease: "power2.out",
+      stagger: 0.08,
+      scrollTrigger: { trigger: "[data-strength-grid]", ...scrollTriggerDefaults },
     });
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="on-dark w-full bg-navy px-6 py-24 text-on-dark sm:px-10 lg:px-14 lg:py-36"
+      className="w-full bg-stone px-6 py-24 sm:px-10 lg:px-14 lg:py-36"
     >
-      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-14 lg:grid-cols-[minmax(0,22rem)_1fr] lg:gap-24">
-        <div data-strength-head className="lg:sticky lg:top-32 lg:self-start">
+      <div className="mx-auto max-w-[1600px]">
+        <div
+          data-strength-head
+          className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
+        >
+          <div>
+            <p
+              data-strength-fade
+              className="flex items-center gap-4 font-latin text-[10px] tracking-[0.35em] text-ink-muted sm:text-[11px]"
+            >
+              <span aria-hidden className="inline-block h-px w-10 bg-ink/25" />
+              OUR STRENGTHS
+            </p>
+            <h2
+              data-strength-fade
+              className="mt-8 font-display text-[clamp(1.7rem,3.6vw,2.9rem)] font-normal leading-[1.5] text-ink"
+            >
+              選ばれる、
+              <br />
+              4つの理由。
+            </h2>
+          </div>
           <p
             data-strength-fade
-            className="flex items-center gap-4 font-latin text-[10px] tracking-[0.35em] text-on-dark/55 sm:text-[11px]"
-          >
-            <span aria-hidden className="inline-block h-px w-10 bg-on-dark/30" />
-            OUR STRENGTHS
-          </p>
-          <h2
-            data-strength-fade
-            className="mt-8 font-display text-[clamp(1.7rem,3.6vw,2.9rem)] font-normal leading-[1.5]"
-          >
-            選ばれる、
-            <br />
-            4つの理由。
-          </h2>
-          <p
-            data-strength-fade
-            className="mt-7 max-w-sm text-[13px] leading-loose text-on-dark/60 sm:text-sm"
+            className="max-w-sm text-[13px] leading-loose text-ink-muted sm:text-sm"
           >
             不動産と建築、その両方を知る会社だからこそ提供できる価値があります。
           </p>
         </div>
 
-        <ul>
+        <div
+          data-strength-grid
+          className="mt-14 grid grid-cols-1 gap-px overflow-hidden bg-ink/15 sm:grid-cols-2 lg:mt-20"
+        >
           {STRENGTHS.map((item) => (
-            <li key={item.index} data-strength-item className="relative">
-              <span
-                data-strength-rule
-                aria-hidden
-                className="block h-px w-full bg-on-dark/20"
-              />
-              <div className="grid grid-cols-[auto_1fr] gap-6 py-9 sm:gap-12 sm:py-12">
-                <span
-                  data-strength-text
-                  className="font-latin text-[11px] tracking-[0.3em] text-on-dark/40"
-                >
-                  {item.index}
-                </span>
-                <div>
-                  <h3
-                    data-strength-text
-                    className="font-display text-xl font-normal sm:text-2xl"
-                  >
-                    {item.title}
-                  </h3>
-                  <p
-                    data-strength-text
-                    className="mt-4 max-w-xl text-[13px] leading-loose text-on-dark/60 sm:text-sm"
-                  >
-                    {item.body}
-                  </p>
-                </div>
-              </div>
-            </li>
+            <div
+              key={item.index}
+              data-strength-card
+              className="flex flex-col gap-5 bg-stone px-8 py-10 sm:px-10 sm:py-12"
+            >
+              <span className="font-latin text-[11px] tracking-[0.3em] text-navy-soft">
+                {item.index}
+              </span>
+              <h3 className="font-display text-xl font-normal leading-snug text-ink sm:text-2xl">
+                {item.title}
+              </h3>
+              <p className="max-w-md text-[13px] leading-loose text-ink-muted sm:text-sm">
+                {item.body}
+              </p>
+            </div>
           ))}
-          <li aria-hidden className="block h-px w-full bg-on-dark/20" />
-        </ul>
+        </div>
       </div>
     </section>
   );

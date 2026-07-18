@@ -10,6 +10,11 @@ import { prefersReducedMotion, scrollTriggerDefaults } from "@/lib/animations";
  *
  * 実運用では管理画面で手動選択し、未選択時は新着順で出す想定のためモックの3件。
  * 実写・実績が用意でき次第、image と各テキストを差し替える。
+ *
+ * 格子ではなく横に流れる帯として見せる。カード列を複製して継ぎ目のない
+ * 無限ループを作り、CSSアニメーションで等速に流す(GSAP不要・軽量)。
+ * ホバー/フォーカスで一時停止、prefers-reduced-motionでは静止し
+ * 素の横スクロールへフォールバックする(globals.css側で制御)。
  */
 const WORKS = [
   {
@@ -35,6 +40,9 @@ const WORKS = [
   },
 ];
 
+// 継ぎ目のない無限ループのため、カード列を1回複製する
+const LOOPED_WORKS = [...WORKS, ...WORKS];
+
 export default function Works() {
   const sectionRef = useScopedGsap<HTMLElement>(() => {
     if (prefersReducedMotion()) return;
@@ -48,41 +56,20 @@ export default function Works() {
       scrollTrigger: { trigger: "[data-works-head]", ...scrollTriggerDefaults },
     });
 
-    const cards = gsap.utils.toArray<HTMLElement>("[data-works-card]");
-    cards.forEach((card, i) => {
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: card, start: "top 85%" },
-      });
-
-      tl.fromTo(
-        card.querySelector("[data-works-image-wrap]"),
-        { clipPath: "inset(0% 0% 100% 0%)" },
-        {
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: 1.2,
-          delay: i * 0.08,
-          ease: "power4.inOut",
-        },
-      )
-        .from(
-          card.querySelector("[data-works-image]"),
-          { scale: 1.2, duration: 1.8, ease: "power2.out" },
-          "<",
-        )
-        .from(
-          card.querySelectorAll("[data-works-text]"),
-          { opacity: 0, y: 16, duration: 0.7, stagger: 0.06, ease: "power2.out" },
-          "-=0.8",
-        );
+    gsap.from("[data-works-track]", {
+      opacity: 0,
+      duration: 1,
+      ease: "power2.out",
+      scrollTrigger: { trigger: "[data-works-track]", ...scrollTriggerDefaults },
     });
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-paper px-6 py-24 sm:px-10 lg:px-14 lg:py-36"
+      className="w-full overflow-hidden bg-paper py-24 sm:py-28 lg:py-36"
     >
-      <div className="mx-auto max-w-[1600px]">
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10 lg:px-14">
         <div
           data-works-head
           className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
@@ -122,46 +109,39 @@ export default function Works() {
             </Link>
           </div>
         </div>
+      </div>
 
-        {/* 高さをずらして並べ、規則正しい格子になりすぎないようにする */}
-        <div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:mt-24 lg:grid-cols-3 lg:gap-x-10">
-          {WORKS.map((work, i) => (
+      {/* 横に流れる帯。ページ全幅まで写真をはみ出させる */}
+      <div className="works-marquee group mt-16 lg:mt-24">
+        <div data-works-track className="works-marquee-track">
+          {LOOPED_WORKS.map((work, i) => (
             <article
-              key={work.title}
-              data-works-card
-              className={i === 1 ? "lg:mt-20" : i === 2 ? "lg:mt-10" : ""}
+              key={`${work.title}-${i}`}
+              className="w-[78vw] shrink-0 sm:w-[46vw] lg:w-[26vw]"
+              aria-hidden={i >= WORKS.length}
             >
-              <Link href="/works" className="group block">
-                <div
-                  data-works-image-wrap
-                  className="media relative aspect-[4/5] w-full overflow-hidden bg-navy"
-                >
+              <Link
+                href="/works"
+                className="group/card block"
+                tabIndex={i >= WORKS.length ? -1 : 0}
+              >
+                <div className="media relative aspect-[4/5] w-full overflow-hidden bg-navy">
                   <Image
-                    data-works-image
                     src={work.image}
                     alt={`${work.title}の施工実績`}
                     fill
-                    sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 100vw"
+                    sizes="(min-width: 1024px) 26vw, (min-width: 640px) 46vw, 78vw"
                     className={`object-cover ${work.position}`}
                   />
                 </div>
 
-                <span
-                  data-works-text
-                  className="mt-6 block font-latin text-[10px] tracking-[0.3em] text-navy-soft"
-                >
+                <span className="mt-6 block font-latin text-[10px] tracking-[0.3em] text-navy-soft">
                   {work.category}
                 </span>
-                <h3
-                  data-works-text
-                  className="mt-3 font-display text-lg font-normal leading-snug text-ink transition-colors group-hover:text-navy-mid sm:text-xl"
-                >
+                <h3 className="mt-3 font-display text-lg font-normal leading-snug text-ink transition-colors group-hover/card:text-navy-mid sm:text-xl">
                   {work.title}
                 </h3>
-                <p
-                  data-works-text
-                  className="mt-2 font-latin text-[11px] tracking-[0.12em] text-ink-muted"
-                >
+                <p className="mt-2 font-latin text-[11px] tracking-[0.12em] text-ink-muted">
                   {work.place}
                 </p>
               </Link>

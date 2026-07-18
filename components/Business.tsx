@@ -8,8 +8,9 @@ import { prefersReducedMotion, scrollTriggerDefaults } from "@/lib/animations";
 /**
  * 事業紹介(仕様書6.1「事業紹介」/ 6.2)。
  *
- * 2本柱を並列に見せるだけでは「別々の会社」に見えるため、
- * 写真と文章を重ねた見開きで各事業を提示したあと、
+ * stagepartners-hpの「写真とテキストを横並びにしたカード」から離れ、
+ * 全幅の写真帯の下にテキストを置くエディトリアルな構成にする。
+ * 2事業をpaper/stoneで面替えし、一続きの記事のように読ませたあと、
  * 「見つける → つくる → 守る」の連携フローで一続きであることを図解する。
  */
 const DIVISIONS = [
@@ -28,6 +29,7 @@ const DIVISIONS = [
     image: "/real-estateimage1.png",
     imagePosition: "object-[70%_80%]",
     href: "/business/real-estate",
+    tone: "paper",
   },
   {
     index: "02",
@@ -44,8 +46,9 @@ const DIVISIONS = [
     image: "/constructimage1.jpg",
     imagePosition: "object-center",
     href: "/business/architecture",
+    tone: "stone",
   },
-];
+] as const;
 
 const FLOW = [
   { step: "01", title: "見つける", body: "物件の調査・仲介・買取" },
@@ -66,41 +69,29 @@ export default function Business() {
       scrollTrigger: { trigger: "[data-business-intro]", ...scrollTriggerDefaults },
     });
 
-    const rows = gsap.utils.toArray<HTMLElement>("[data-business-row]");
-    rows.forEach((row) => {
-      const fromLeft = row.dataset.businessRow === "even";
+    const divisions = gsap.utils.toArray<HTMLElement>("[data-business-division]");
+    divisions.forEach((division) => {
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: row, ...scrollTriggerDefaults },
+        scrollTrigger: { trigger: division, ...scrollTriggerDefaults },
       });
 
       tl.fromTo(
-        row.querySelector("[data-business-image-wrap]"),
-        {
-          clipPath: fromLeft
-            ? "inset(0% 0% 0% 100%)"
-            : "inset(0% 100% 0% 0%)",
-        },
+        division.querySelector("[data-business-image-wrap]"),
+        { clipPath: "inset(0% 0% 100% 0%)" },
         { clipPath: "inset(0% 0% 0% 0%)", duration: 1.3, ease: "power4.inOut" },
       )
         .from(
-          row.querySelector("[data-business-image]"),
-          { scale: 1.2, duration: 1.9, ease: "power2.out" },
+          division.querySelector("[data-business-image]"),
+          { scale: 1.15, duration: 1.9, ease: "power2.out" },
           "<",
         )
         .from(
-          row.querySelectorAll("[data-business-text]"),
-          {
-            opacity: 0,
-            y: 22,
-            duration: 0.9,
-            stagger: 0.09,
-            ease: "power2.out",
-          },
+          division.querySelectorAll("[data-business-text]"),
+          { opacity: 0, y: 22, duration: 0.9, stagger: 0.09, ease: "power2.out" },
           "-=0.9",
         );
     });
 
-    // 連携フロー: 罫線を引いてから各ステップを起こす
     gsap.from("[data-flow-rule]", {
       scaleX: 0,
       transformOrigin: "left center",
@@ -120,134 +111,115 @@ export default function Business() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="business"
-      className="w-full overflow-hidden bg-paper px-6 py-24 sm:px-10 lg:px-14 lg:py-36"
-    >
-      <div className="mx-auto max-w-[1600px]">
-        <div
-          data-business-intro
-          className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between"
-        >
-          <div>
-            <p
-              data-business-fade
-              className="flex items-center gap-4 font-latin text-[10px] tracking-[0.35em] text-ink-muted sm:text-[11px]"
-            >
-              <span aria-hidden className="inline-block h-px w-10 bg-ink/25" />
-              OUR BUSINESS
-            </p>
-            <h2
-              data-business-fade
-              className="mt-8 font-display text-[clamp(1.7rem,3.6vw,2.9rem)] font-normal leading-[1.5] text-ink"
-            >
-              不動産と建築を、
-              <br />
-              一社でつなぐ。
-            </h2>
-          </div>
+    <section ref={sectionRef} id="business" className="w-full overflow-hidden bg-paper">
+      <div
+        data-business-intro
+        className="mx-auto flex max-w-[1600px] flex-col gap-8 px-6 py-24 sm:px-10 lg:flex-row lg:items-end lg:justify-between lg:px-14 lg:py-36 lg:pb-24"
+      >
+        <div>
           <p
             data-business-fade
-            className="max-w-md text-[13px] leading-loose text-ink-muted sm:text-sm"
+            className="flex items-center gap-4 font-latin text-[10px] tracking-[0.35em] text-ink-muted sm:text-[11px]"
           >
-            仲介で終わらせず、リフォームで価値を高め、管理まで。事業を分けずに一気通貫で担うからこそ、土地と建物の可能性を最大限に引き出せます。
+            <span aria-hidden className="inline-block h-px w-10 bg-ink/25" />
+            OUR BUSINESS
           </p>
+          <h2
+            data-business-fade
+            className="mt-8 font-display text-[clamp(1.7rem,3.6vw,2.9rem)] font-normal leading-[1.5] text-ink"
+          >
+            不動産と建築を、
+            <br />
+            一社でつなぐ。
+          </h2>
         </div>
+        <p
+          data-business-fade
+          className="max-w-md text-[13px] leading-loose text-ink-muted sm:text-sm"
+        >
+          仲介で終わらせず、リフォームで価値を高め、管理まで。事業を分けずに一気通貫で担うからこそ、土地と建物の可能性を最大限に引き出せます。
+        </p>
+      </div>
 
-        <div className="mt-16 flex flex-col gap-24 lg:mt-24 lg:gap-36">
-          {DIVISIONS.map((division, i) => {
-            const reversed = i % 2 === 1;
-            return (
-              <article
-                key={division.index}
-                data-business-row={reversed ? "even" : "odd"}
-                className="relative grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-0"
-              >
-                <div
-                  data-business-image-wrap
-                  className={`media relative z-0 aspect-[4/3] w-full overflow-hidden bg-navy lg:col-span-7 lg:aspect-[16/11] ${
-                    reversed ? "lg:order-2" : ""
-                  }`}
+      {DIVISIONS.map((division) => (
+        <article
+          key={division.index}
+          data-business-division
+          className={`w-full ${division.tone === "stone" ? "bg-stone" : "bg-paper"}`}
+        >
+          <div
+            data-business-image-wrap
+            className="media relative aspect-[16/10] w-full overflow-hidden bg-navy sm:aspect-[21/9]"
+          >
+            <Image
+              data-business-image
+              src={division.image}
+              alt={`${division.title}のイメージ`}
+              fill
+              sizes="100vw"
+              className={`object-cover ${division.imagePosition}`}
+            />
+            <span className="absolute left-6 top-6 font-latin text-[10px] tracking-[0.3em] text-white/85 sm:left-10 lg:left-14">
+              {division.en}
+            </span>
+          </div>
+
+          <div className="mx-auto max-w-[1600px] px-6 py-14 sm:px-10 lg:px-14 lg:py-20">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-16">
+              <div className="lg:col-span-4">
+                <span
+                  data-business-text
+                  className="block font-latin text-[11px] tracking-[0.25em] text-ink-muted"
                 >
-                  <Image
-                    data-business-image
-                    src={division.image}
-                    alt={`${division.title}のイメージ`}
-                    fill
-                    sizes="(min-width: 1024px) 58vw, 100vw"
-                    className={`object-cover ${division.imagePosition}`}
-                  />
-                  {/* 文章パネルが重なる側とは反対の角にラベルを置く */}
-                  <span
-                    className={`absolute top-6 font-latin text-[10px] tracking-[0.3em] text-white/85 ${
-                      reversed ? "right-6" : "left-6"
-                    }`}
+                  {division.index}　{division.lead}
+                </span>
+                <h3 data-business-text className="mt-5">
+                  <Link
+                    href={division.href}
+                    className="group inline-flex items-baseline gap-3 font-display text-3xl font-normal text-ink transition-colors hover:text-navy-mid sm:text-4xl"
                   >
-                    {division.en}
-                  </span>
-                </div>
-
-                {/* 写真の縁に文章の面を重ね、2事業が地続きであることを紙面でも示す。
-                    パネルは行の高さいっぱいに伸ばし、重なりが切り欠きに見えないようにする。 */}
-                <div
-                  className={`relative z-10 flex flex-col justify-center bg-paper lg:col-span-5 lg:self-stretch lg:py-14 ${
-                    reversed
-                      ? "lg:order-1 lg:-mr-14 lg:pr-14 lg:pl-0"
-                      : "lg:-ml-14 lg:pl-14"
-                  }`}
-                >
-                  <span
-                    data-business-text
-                    className="block font-latin text-[11px] tracking-[0.25em] text-ink-muted"
-                  >
-                    {division.index}　{division.lead}
-                  </span>
-
-                  <h3 data-business-text className="mt-5">
-                    <Link
-                      href={division.href}
-                      className="group inline-flex items-baseline gap-3 font-display text-3xl font-normal text-ink transition-colors hover:text-navy-mid sm:text-4xl"
+                    {division.title}
+                    <span
+                      aria-hidden
+                      className="text-lg transition-transform duration-300 group-hover:translate-x-1.5"
                     >
-                      {division.title}
-                      <span
-                        aria-hidden
-                        className="text-lg transition-transform duration-300 group-hover:translate-x-1.5"
-                      >
-                        →
-                      </span>
-                    </Link>
-                  </h3>
+                      →
+                    </span>
+                  </Link>
+                </h3>
+                <p
+                  data-business-text
+                  className="mt-6 max-w-md text-[13px] leading-loose text-ink-muted sm:text-sm"
+                >
+                  {division.description}
+                </p>
+              </div>
 
-                  <p
-                    data-business-text
-                    className="mt-6 max-w-md text-[13px] leading-loose text-ink-muted sm:text-sm"
+              <ul
+                data-business-text
+                className="space-y-5 border-t border-ink/15 pt-8 lg:col-span-8 lg:border-t-0 lg:border-l lg:pl-16 lg:pt-0"
+              >
+                {division.points.map((point) => (
+                  <li
+                    key={point}
+                    className="flex gap-4 text-[13px] leading-relaxed text-ink/80 sm:text-sm"
                   >
-                    {division.description}
-                  </p>
+                    <span
+                      aria-hidden
+                      className="mt-2.5 inline-block h-px w-6 shrink-0 bg-navy-soft"
+                    />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </article>
+      ))}
 
-                  <ul data-business-text className="mt-8 space-y-3.5">
-                    {division.points.map((point) => (
-                      <li
-                        key={point}
-                        className="flex gap-4 text-[13px] leading-relaxed text-ink/80"
-                      >
-                        <span
-                          aria-hidden
-                          className="mt-2.5 inline-block h-px w-4 shrink-0 bg-navy-soft"
-                        />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-
-        {/* 連携フロー: 2事業が一続きであることの図解(仕様書6.2) */}
-        <div data-flow className="mt-24 lg:mt-36">
+      {/* 連携フロー: 2事業が一続きであることの図解(仕様書6.2) */}
+      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-4 sm:px-10 lg:px-14 lg:pb-36 lg:pt-6">
+        <div data-flow>
           <p className="font-latin text-[10px] tracking-[0.3em] text-ink-muted">
             ONE PARTNER, ONE FLOW
           </p>
