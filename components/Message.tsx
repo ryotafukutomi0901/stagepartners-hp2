@@ -128,32 +128,17 @@ export default function Message() {
               ))}
             </h2>
 
-            <div
+            <Link
               data-message-link
-              className="mt-14 flex flex-wrap items-center gap-x-10 gap-y-4"
+              href="/company"
+              className="group mt-14 inline-flex items-center gap-4 text-xs tracking-[0.18em] text-ink transition-colors hover:text-navy-mid"
             >
-              <Link
-                href="/business"
-                className="group inline-flex items-center gap-4 text-xs tracking-[0.18em] text-ink transition-colors hover:text-navy-mid"
-              >
-                事業内容を見る
-                <span
-                  aria-hidden
-                  className="inline-block h-px w-10 bg-ink/50 transition-all duration-300 group-hover:w-14 group-hover:bg-navy-mid"
-                />
-              </Link>
-
-              <Link
-                href="/company"
-                className="group inline-flex items-center gap-4 text-xs tracking-[0.18em] text-ink transition-colors hover:text-navy-mid"
-              >
-                私たちについて
-                <span
-                  aria-hidden
-                  className="inline-block h-px w-10 bg-ink/50 transition-all duration-300 group-hover:w-14 group-hover:bg-navy-mid"
-                />
-              </Link>
-            </div>
+              私たちについて
+              <span
+                aria-hidden
+                className="inline-block h-px w-10 bg-ink/50 transition-all duration-300 group-hover:w-14 group-hover:bg-navy-mid"
+              />
+            </Link>
           </div>
         </div>
       </div>

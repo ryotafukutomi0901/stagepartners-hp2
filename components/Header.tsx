@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useScopedGsap, gsap } from "@/hooks/useGsap";
 import { prefersReducedMotion } from "@/lib/animations";
 import { NAV_ITEMS, CONTACT_HREF } from "@/lib/site";
@@ -10,6 +11,20 @@ import { NAV_ITEMS, CONTACT_HREF } from "@/lib/site";
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // ロゴクリック: すでにTOPページにいる場合は遷移せず最上部までスクロールする
+  // (それ以外のページからは通常どおり "/" へ遷移し、TOPの先頭で着地する)。
+  const handleLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    setIsMenuOpen(false);
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion() ? "auto" : "smooth",
+      });
+    }
+  };
 
   // ヒーローの上には透明で重ね、スクロールに追従してネイビーへ沈む(仕様書5.1)。
   const headerRef = useScopedGsap<HTMLElement>(({ scope }) => {
@@ -94,6 +109,7 @@ export default function Header() {
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 sm:px-10 lg:px-14">
           <Link
             href="/"
+            onClick={handleLogoClick}
             aria-label="STAGE PARTNERS トップへ"
             className="relative z-10 shrink-0"
           >

@@ -17,7 +17,7 @@ const DIVISIONS = [
   {
     index: "01",
     en: "REAL ESTATE",
-    title: "不動産事業",
+    title: "不動産ソリューション",
     lead: "仲介・管理・買取再販",
     description:
       "地主さま・オーナーさまの「貸したい・売りたい」に応え、確かな価値へとつなぎます。",
@@ -34,7 +34,7 @@ const DIVISIONS = [
   {
     index: "02",
     en: "ARCHITECTURE",
-    title: "建築事業",
+    title: "建築ソリューション",
     lead: "設計・施工・リノベーション",
     description:
       "空室・老朽化・資産価値の低下といった課題を、建物への手入れで解決します。",
@@ -122,7 +122,7 @@ export default function Business() {
             className="flex items-center gap-4 font-latin text-[10px] tracking-[0.35em] text-ink-muted sm:text-[11px]"
           >
             <span aria-hidden className="inline-block h-px w-10 bg-ink/25" />
-            OUR BUSINESS
+            OUR SOLUTIONS
           </p>
           <h2
             data-business-fade
