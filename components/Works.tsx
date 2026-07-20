@@ -117,7 +117,7 @@ export default function Works() {
           {LOOPED_WORKS.map((work, i) => (
             <article
               key={`${work.title}-${i}`}
-              className="w-[78vw] shrink-0 sm:w-[46vw] lg:w-[26vw]"
+              className="w-[62vw] shrink-0 sm:w-[38vw] md:w-[32vw] lg:w-[24vw] xl:w-[22vw]"
               aria-hidden={i >= WORKS.length}
             >
               <Link
@@ -125,20 +125,20 @@ export default function Works() {
                 className="group/card block"
                 tabIndex={i >= WORKS.length ? -1 : 0}
               >
-                <div className="media relative aspect-[4/5] w-full overflow-hidden bg-navy">
+                <div className="media relative aspect-[4/3] w-full overflow-hidden bg-navy sm:aspect-[4/5]">
                   <Image
                     src={work.image}
                     alt={`${work.title}の施工実績`}
                     fill
-                    sizes="(min-width: 1024px) 26vw, (min-width: 640px) 46vw, 78vw"
+                    sizes="(min-width: 1280px) 22vw, (min-width: 1024px) 24vw, (min-width: 768px) 32vw, (min-width: 640px) 38vw, 62vw"
                     className={`object-cover ${work.position}`}
                   />
                 </div>
 
-                <span className="mt-6 block font-latin text-[10px] tracking-[0.3em] text-navy-soft">
+                <span className="mt-4 block font-latin text-[10px] tracking-[0.3em] text-navy-soft sm:mt-6">
                   {work.category}
                 </span>
-                <h3 className="mt-3 font-display text-lg font-normal leading-snug text-ink transition-colors group-hover/card:text-navy-mid sm:text-xl">
+                <h3 className="mt-2 font-display text-base font-normal leading-snug text-ink transition-colors group-hover/card:text-navy-mid sm:mt-3 sm:text-lg lg:text-xl">
                   {work.title}
                 </h3>
                 <p className="mt-2 font-latin text-[11px] tracking-[0.12em] text-ink-muted">

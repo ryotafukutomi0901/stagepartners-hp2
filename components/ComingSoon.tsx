@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useScopedGsap, gsap, SplitText } from "@/hooks/useGsap";
-import { prefersReducedMotion } from "@/lib/animations";
+import { onStageReveal, prefersReducedMotion } from "@/lib/animations";
 
 /**
  * 下層ページの準備中表示。
@@ -34,7 +34,9 @@ export default function ComingSoon({
       mask: "lines",
     });
 
-    const tl = gsap.timeline({ delay: 0.1 });
+    // 幕(PageLoader)が上がるのに合わせて再生する。すぐに走らせると、
+    // 導入が幕の裏で終わってしまい、幕が上がったときには静止画になる。
+    const tl = gsap.timeline({ delay: 0.1, paused: true });
 
     tl.from("[data-cs-frame]", { opacity: 0, duration: 1.2, ease: "power2.out" })
       .from(
@@ -52,6 +54,8 @@ export default function ComingSoon({
         { opacity: 0, y: 16, duration: 0.8, stagger: 0.08, ease: "power2.out" },
         "-=0.6",
       );
+
+    return onStageReveal(() => tl.play());
   }, []);
 
   return (

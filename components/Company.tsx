@@ -3,7 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useScopedGsap, gsap, SplitText } from "@/hooks/useGsap";
-import { prefersReducedMotion, scrollTriggerDefaults } from "@/lib/animations";
+import {
+  onStageReveal,
+  prefersReducedMotion,
+  scrollTriggerDefaults,
+} from "@/lib/animations";
 import { COMPANY_PROFILE } from "@/lib/site";
 
 /**
@@ -24,7 +28,9 @@ export default function Company() {
       mask: "lines",
     });
 
-    const tl = gsap.timeline({ delay: 0.1 });
+    // 幕(PageLoader)が上がるのに合わせて再生する。すぐに走らせると、
+    // 導入が幕の裏で終わってしまい、幕が上がったときには静止画になる。
+    const tl = gsap.timeline({ delay: 0.1, paused: true });
 
     tl.from("[data-company-head]", {
       opacity: 0,
@@ -71,6 +77,8 @@ export default function Company() {
       ease: "power2.out",
       scrollTrigger: { trigger: "[data-company-list]", ...scrollTriggerDefaults },
     });
+
+    return onStageReveal(() => tl.play());
   }, []);
 
   return (

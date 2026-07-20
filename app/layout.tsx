@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP, Shippori_Mincho, Inter } from "next/font/google";
+import PageLoader from "@/components/PageLoader";
 import "./globals.css";
 
 // 本文・UI。可読性重視のゴシック。
@@ -61,6 +62,7 @@ export default function RootLayout({
         >
           本文へスキップ
         </a>
+        <PageLoader />
         {children}
       </body>
     </html>

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useScopedGsap, gsap, SplitText } from "@/hooks/useGsap";
-import { prefersReducedMotion } from "@/lib/animations";
+import { onStageReveal, prefersReducedMotion } from "@/lib/animations";
 import { CONTACT_HREF } from "@/lib/site";
 
 /**
@@ -22,7 +22,9 @@ export default function Hero() {
       mask: "lines",
     });
 
-    const tl = gsap.timeline({ delay: 0.1 });
+    // 幕(PageLoader)が上がるのに合わせて再生する。すぐに走らせると、
+    // 導入が幕の裏で終わってしまい、幕が上がったときには静止画になる。
+    const tl = gsap.timeline({ delay: 0.1, paused: true });
 
     tl.from("[data-hero-image]", { scale: 1.24, duration: 2.6, ease: "power2.out" })
       .from(
@@ -82,6 +84,8 @@ export default function Hero() {
         scrub: true,
       },
     });
+
+    return onStageReveal(() => tl.play());
   }, []);
 
   return (
@@ -174,16 +178,6 @@ export default function Hero() {
             >
               →
             </span>
-          </Link>
-          <Link
-            href="/business"
-            className="group inline-flex items-center gap-3 px-2 py-4 text-xs tracking-[0.18em] text-on-dark/85 transition-colors hover:text-on-dark"
-          >
-            事業内容を見る
-            <span
-              aria-hidden
-              className="inline-block h-px w-9 bg-on-dark/50 transition-all duration-300 group-hover:w-12 group-hover:bg-on-dark"
-            />
           </Link>
         </div>
       </div>
