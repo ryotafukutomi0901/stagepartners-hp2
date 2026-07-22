@@ -111,6 +111,15 @@ export default function Works() {
         </div>
       </div>
 
+      {/* カード上端をアーチに抜くためのマスク(比率に追従する objectBoundingBox 指定) */}
+      <svg aria-hidden width="0" height="0" className="absolute">
+        <defs>
+          <clipPath id="works-card-arch" clipPathUnits="objectBoundingBox">
+            <path d="M0,1 L0,0.14 Q0.5,-0.08 1,0.14 L1,1 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
       {/* 横に流れる帯。ページ全幅まで写真をはみ出させる */}
       <div className="works-marquee group mt-16 lg:mt-24">
         <div data-works-track className="works-marquee-track">
@@ -125,7 +134,10 @@ export default function Works() {
                 className="group/card block"
                 tabIndex={i >= WORKS.length ? -1 : 0}
               >
-                <div className="media relative aspect-[4/3] w-full overflow-hidden bg-navy sm:aspect-[4/5]">
+                <div
+                  className="media relative aspect-[4/3] w-full overflow-hidden bg-navy sm:aspect-[4/5]"
+                  style={{ clipPath: "url(#works-card-arch)" }}
+                >
                   <Image
                     src={work.image}
                     alt={`${work.title}の施工実績`}
